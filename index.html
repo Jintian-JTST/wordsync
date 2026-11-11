@@ -88,7 +88,7 @@ td,th{padding:4px 6px;text-align:center;border-bottom:1px solid #eee}
   </div>
 
   <div id="waitBox" class="hide muted" style="text-align:center;margin-top:8px">没有结果时，<b id="count"></b> 秒后进入下一轮</div>
-      <div id="doneBox" class="hide"><div class="row"><button id="btnAgain">再来一局</button><button class="sec" id="btnExport">导出结果</button></div></div>
+      <div id="doneBox" class="hide"><div class="row"><button id="btnAgain">再来一局</button><button class="sec" id="btnExport">导出图片</button></div></div>
     </div>
 
     <div id="v-hist" class="card hide">
@@ -330,20 +330,68 @@ function addHist(n,a,b,same){
   histRows[n]=tr;$("hbody").appendChild(tr);
 }
 
-// ---------- 导出 ----------
-function exportCsv(){
-  if(!G||G.phase!=="done")return;
-  const esc=s=>{s=String(s==null?"":s);if(/^[=+\-@]/.test(s))s="'"+s;return /[",\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s};
-  const rows=[["轮次",myName(),theirName(),"结果"]];
+// ---------- 导出图片 ----------
+function renderImage(){
+  const rows=[];
   Object.keys(G.rounds).map(Number).sort((a,b)=>a-b).forEach(n=>{
-    const r=G.rounds[n];if(n<=G.final&&r.me&&r.them)rows.push([n,r.me,r.them,r.out||"不一样"]);
+    const r=G.rounds[n];if(n<=G.final&&r.me&&r.them)rows.push({n,me:r.me,them:r.them,out:r.out||"不一样"});
   });
-  const csv="﻿"+rows.map(r=>r.map(esc).join(",")).join("\r\n");
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+  const W=750,PAD=40,RH=76,HEAD=250,FOOT=90,H=HEAD+RH*(rows.length+1)+FOOT;
+  const S=2,cv=document.createElement("canvas");cv.width=W*S;cv.height=H*S;
+  const c=cv.getContext("2d");c.scale(S,S);
+  const FONT='-apple-system,"PingFang SC","Microsoft YaHei",sans-serif';
+  c.fillStyle="#f7f8fa";c.fillRect(0,0,W,H);
+  c.fillStyle="#fff";c.strokeStyle="#E8EDF3";c.lineWidth=2;
+  c.beginPath();c.roundRect(20,20,W-40,H-40,28);c.fill();c.stroke();
+  c.textAlign="center";c.textBaseline="middle";
+  c.fillStyle="#222";c.font="700 40px "+FONT;c.fillText("心有灵犀 · 同词游戏",W/2,90);
+  c.fillStyle="#2f855a";c.font="700 34px "+FONT;
+  c.fillText((G.rounds[G.final].out==="一致"?"默契达成！":"默契达成（互相认可）！")+"共 "+G.final+" 轮",W/2,155);
+  c.fillStyle="#888";c.font="24px "+FONT;
   const d=new Date(),p=x=>String(x).padStart(2,"0");
-  a.download="wordsync-"+room+"-"+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+".csv";
-  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  c.fillText(d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+"  房间 "+room,W/2,205);
+  const cols=[100,320,565];
+  const fit=(t,max)=>{let s=30;c.font="600 "+s+"px "+FONT;while(c.measureText(t).width>max&&s>16){s-=2;c.font="600 "+s+"px "+FONT}
+    if(c.measureText(t).width>max){while(t.length>1&&c.measureText(t+"…").width>max)t=t.slice(0,-1);t+="…"}return t};
+  let y=HEAD;
+  c.fillStyle="#EEF4FF";c.fillRect(PAD,y,W-PAD*2,RH);
+  c.fillStyle="#5B86E5";c.font="700 26px "+FONT;
+  c.fillText("轮",cols[0],y+RH/2);c.fillText(fit(myName(),230),cols[1],y+RH/2);c.fillText(fit(theirName(),230),cols[2],y+RH/2);
+  rows.forEach(r=>{
+    y+=RH;
+    c.strokeStyle="#eee";c.lineWidth=1;c.beginPath();c.moveTo(PAD,y);c.lineTo(W-PAD,y);c.stroke();
+    const ok=r.out!=="不一样";
+    c.fillStyle=ok?"#2f855a":"#222";
+    c.font="600 28px "+FONT;c.fillText(String(r.n),cols[0],y+RH/2);
+    c.fillText(fit(r.me,230),cols[1],y+RH/2);c.fillText(fit(r.them,230),cols[2],y+RH/2);
+  });
+  c.fillStyle="#aaa";c.font="22px "+FONT;c.fillText("jintian-jtst.github.io/wordsync",W/2,H-60);
+  return new Promise(res=>cv.toBlob(res,"image/png"));
+}
+const isMobile=()=>/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform));
+async function exportImage(){
+  if(!G||G.phase!=="done")return;
+  const btn=$("btnExport"),label=btn.textContent;
+  const note=t=>{btn.textContent=t;setTimeout(()=>btn.textContent=label,2500)};
+  const d=new Date(),p=x=>String(x).padStart(2,"0");
+  const name="wordsync-"+room+"-"+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+".png";
+  const download=blob=>{const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);note("已保存图片 ✓")};
+  try{
+    if(isMobile()){
+      const blob=await renderImage(),file=new File([blob],name,{type:"image/png"});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){
+        try{await navigator.share({files:[file],title:"心有灵犀"});return}
+        catch(e){if(e&&e.name==="AbortError")return}
+      }
+      download(blob);
+    }else if(navigator.clipboard&&window.ClipboardItem){
+      // 传入 Promise，保证在点击手势内完成写入
+      const bp=renderImage();
+      try{await navigator.clipboard.write([new ClipboardItem({"image/png":bp})]);note("已复制到剪贴板 ✓")}
+      catch(e){download(await bp)}
+    }else download(await renderImage());
+  }catch(e){note("导出失败")}
 }
 
 // ---------- 事件 ----------
@@ -353,7 +401,7 @@ $("joinCode").addEventListener("keydown",e=>{if(e.key==="Enter")$("btnJoin").cli
 $("nick").addEventListener("change",applyNick);
 $("btnStart").onclick=()=>{if(isHost)hostStart();else send("req")};
 $("btnAgain").onclick=()=>{if(isHost)hostStart();else{send("req");$("btnAgain").disabled=true;$("btnAgain").textContent="已请求，等待房主…"}};
-$("btnExport").onclick=exportCsv;
+$("btnExport").onclick=exportImage;
 $("btnOk").onclick=()=>judge("ok");
 $("btnNo").onclick=()=>judge("no");
 $("btnSubmit").onclick=submit;
