@@ -16,7 +16,7 @@
 
 两个人突然说出同一句话，或者不约而同地想到同一件事。
 
-WordSync 就是一个把这种巧合变成游戏的小项目。
+同频共词就是一个把这种巧合变成游戏的小项目。
 
 两个人分别写下一个词，提交后同时揭晓。
 
@@ -168,7 +168,9 @@ wordsync/
 
 ## 👨‍💻 作者
 
-**JTST**
+**Estella** 和 **JTST**
+
+在某一个神秘的下午复刻出来的小游戏
 
 GitHub：[Jintian-JTST](https://github.com/Jintian-JTST)
 
@@ -176,7 +178,7 @@ GitHub：[Jintian-JTST](https://github.com/Jintian-JTST)
 
 ---
 
-**WordSync · 脑电波同频**
+**同频共词**
 
 *世界上有那么多词，我们偏偏想到了同一个。*
 
