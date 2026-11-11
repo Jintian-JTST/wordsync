@@ -6,18 +6,19 @@
 <title>心有灵犀 · 同词游戏</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f4f1ea;color:#222;display:flex;justify-content:center;padding:16px}
+body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f7f8fa;color:#222;display:flex;justify-content:center;padding:16px}
 #app{width:100%;max-width:460px}
 h1{font-size:22px;margin:8px 0 4px}
 .sub{color:#777;font-size:13px;margin-bottom:16px}
-.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-button{font-size:16px;padding:10px 16px;border:0;border-radius:10px;background:#2b6cb0;color:#fff;cursor:pointer}
-button.sec{background:#e2e8f0;color:#222}
+.card{background:#fff;border-radius:20px;padding:18px;margin-bottom:14px;border:1px solid #E8EDF3;
+  box-shadow:0 4px 20px rgba(0,0,0,.04);}
+button{font-size:16px;padding:10px 16px;border:0;border-radius:10px;background:#5B86E5;color:#fff;cursor:pointer}
+button.sec{background:#FFF5E8;color:#E69A4A}
 button:disabled{opacity:.45;cursor:default}
 input[type=text]{font-size:18px;padding:10px;border:1px solid #ccc;border-radius:10px;width:100%}
 .row{display:flex;gap:8px;align-items:center;margin-top:10px}
 .row>*{flex:1}
-.code{font-size:34px;letter-spacing:6px;font-weight:700;text-align:center;font-family:monospace}
+.code{font-size:38px;letter-spacing:10px;font-weight:800;text-align:center;font-family:monospace;color:#5B86E5;}
 .big{font-size:42px;text-align:center;font-weight:700;margin:8px 0}
 .words{display:flex;gap:10px;margin:10px 0}
 .words div{flex:1;text-align:center;background:#f7fafc;border-radius:10px;padding:12px;font-size:20px;word-break:break-all}
@@ -25,7 +26,9 @@ input[type=text]{font-size:18px;padding:10px;border:1px solid #ccc;border-radius
 .ok{color:#2f855a}.bad{color:#c53030}
 table{width:100%;border-collapse:collapse;font-size:14px}
 td,th{padding:4px 6px;text-align:center;border-bottom:1px solid #eee}
-.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;background:#edf2f7}
+.pill{display:inline-block;padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;
+
+  background:#EEF4FF;color:#5B86E5;}
 .hide{display:none}
 .opt label{margin-right:12px;font-size:15px}
 .muted{color:#888;font-size:13px}
