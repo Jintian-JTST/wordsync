@@ -30,6 +30,7 @@ td,th{padding:4px 6px;text-align:center;border-bottom:1px solid #eee}
 
   background:#EEF4FF;color:#5B86E5;}
 .hide{display:none}
+#pillMe{cursor:pointer}
 .opt label{margin-right:12px;font-size:15px}
 .muted{color:#888;font-size:13px}
 </style>
@@ -162,7 +163,7 @@ function enter(code,host){
   applyNick();
   room=code;isHost=host;peer=null;G=null;early={};
   $("v-home").classList.add("hide");$("v-room").classList.remove("hide");
-  $("roomCode").textContent=code;$("pillMe").textContent=myName();$("pillPeer").textContent="等待对方加入…";
+  $("roomCode").textContent=code;showMe();$("pillPeer").textContent="等待对方加入…";
   $("v-hist").classList.add("hide");
   showView("lobby");$("btnStart").disabled=true;
   setStartLabel();
@@ -178,6 +179,15 @@ function leave(){
   const cs=closeNet();setTimeout(()=>cs.forEach(c=>c.end(true)),400);
   room=null;peer=null;G=null;early={};
   $("v-room").classList.add("hide");$("v-home").classList.remove("hide");history.replaceState(null,"",location.pathname)
+}
+function showMe(){$("pillMe").textContent=myName()+" ✎"}
+function rename(){
+  if(!room)return;
+  const v=prompt("修改昵称",me.name);if(v===null)return;
+  const n=v.trim().slice(0,12);if(!n)return;
+  me.name=n;store.set("ws_nick",n);$("nick").value=n;showMe();
+  if(G)$("hMe").textContent=myName();
+  send("hello");
 }
 function setStartLabel(){$("btnStart").textContent=isHost?"开始游戏":"请房主开始游戏"}
 
@@ -198,7 +208,7 @@ function onMsg(m){
       if(G){G=null;clearInterval(tickT);showView("lobby");$("v-hist").classList.add("hide")}
       send("hello");
     }else if(peer.id!==m.from){ if(isHost)send("full",{to:m.from}); return }
-    peer.name=m.name;peerSeen=Date.now();$("pillPeer").textContent=theirName();
+    peer.name=m.name;peerSeen=Date.now();$("pillPeer").textContent=theirName();if(G)$("hPeer").textContent=theirName();
     if(!G)$("btnStart").disabled=false;
     return;
   }
@@ -399,6 +409,7 @@ $("btnCreate").onclick=()=>{enter(rid(5),true)};
 $("btnJoin").onclick=()=>{const c=$("joinCode").value.trim().toUpperCase();if(c.length<4){$("homeMsg").textContent="请输入房间码";return}$("homeMsg").textContent="";enter(c,false)};
 $("joinCode").addEventListener("keydown",e=>{if(e.key==="Enter")$("btnJoin").click()});
 $("nick").addEventListener("change",applyNick);
+$("pillMe").onclick=rename;
 $("btnStart").onclick=()=>{if(isHost)hostStart();else send("req")};
 $("btnAgain").onclick=()=>{if(isHost)hostStart();else{send("req");$("btnAgain").disabled=true;$("btnAgain").textContent="已请求，等待房主…"}};
 $("btnExport").onclick=exportImage;
