@@ -72,7 +72,7 @@ td,th{padding:4px 6px;text-align:center;border-bottom:1px solid #eee}
     </div>
 
    <div id="v-reveal" class="card hide">
-  <div class="words">...</div>
+  <div class="words"><div><small id="nm1"></small><span id="w1"></span></div><div><small id="nm2"></small><span id="w2"></span></div></div>
 
   <div id="verdict" class="big"></div>
 
@@ -99,8 +99,7 @@ td,th{padding:4px 6px;text-align:center;border-bottom:1px solid #eee}
     </div>
   </div>
 
-  <div id="waitBox" ...
-      
+  <div id="waitBox" class="hide" style="text-align:center">下一轮倒计时：<b id="count"></b> 秒</div>
       <div id="doneBox" class="hide"><div class="row"><button id="btnAgain">再来一局</button></div></div>
     </div>
 
@@ -196,6 +195,9 @@ function onMsg(m){
   peerSeen=Date.now();
   if(m.t==="cfg"){setWait(m.wait,true)}
   else if(m.t==="start"){startGame(m.wait)}
+  else if(m.t==="judge"){
+    const r=getRound(m.round);r.jThem=m.v;checkJudge(m.round);
+  }
   else if(m.t==="word"){
     const r=getRound(m.round);r.them=m.w;
     if(G&&m.round===G.round&&G.phase==="write")updHint();
@@ -220,7 +222,7 @@ function startGame(w){
   beginRound(1);
 }
 function beginRound(n){
-  G.round=n;G.phase="write";getRound(n);
+  G.round=n;G.phase="write";getRound(n);$("judgeBox").classList.add("hide");
   $("rnd").textContent=n;$("wordInput").value="";$("wordInput").disabled=false;$("btnSubmit").disabled=false;
   showView("write");updHint();$("wordInput").focus();
 }
@@ -241,17 +243,36 @@ function tryResolve(n){
   $("w1").textContent=r.me;$("w2").textContent=r.them;
   showView("reveal");$("v-hist").classList.remove("hide");
   if(same){
-    G.phase="done";
+    G.phase="done";$("judgeBox").classList.add("hide");
     $("verdict").innerHTML='<span class="ok">🎉 默契达成！共 '+n+' 轮</span>';
     $("waitBox").classList.add("hide");$("doneBox").classList.remove("hide");
   }else{
     G.phase="wait";G.deadline=Date.now()+G.wait*1000;
     $("verdict").innerHTML='<span class="bad">不一样</span>';
     $("doneBox").classList.add("hide");$("waitBox").classList.remove("hide");
+    $("judgeBox").classList.remove("hide");
+    ["btnPerfect","btnClose","btnDifferent"].forEach(id=>$(id).disabled=false);
+    checkJudge(n);
     clearInterval(tickT);
     const tick=()=>{const left=Math.ceil((G.deadline-Date.now())/1000);$("count").textContent=Math.max(0,left);
       if(left<=0){clearInterval(tickT);beginRound(n+1)}};
     tick();tickT=setInterval(tick,250);
+  }
+}
+function judge(v){
+  if(!G||G.phase!=="wait")return;
+  const r=G.rounds[G.round];if(!r||r.jMe)return;
+  r.jMe=v;["btnPerfect","btnClose","btnDifferent"].forEach(id=>$(id).disabled=true);
+  send("judge",{round:G.round,v});checkJudge(G.round);
+}
+// 双方都选“完全一致/差不多”则视为默契达成
+function checkJudge(n){
+  if(!G||G.phase!=="wait"||n!==G.round)return;
+  const r=G.rounds[n];if(!r||!r.jMe||!r.jThem)return;
+  if(r.jMe!=="d"&&r.jThem!=="d"){
+    G.phase="done";clearInterval(tickT);
+    $("verdict").innerHTML='<span class="ok">🤝 默契达成！共 '+n+' 轮</span>';
+    $("judgeBox").classList.add("hide");$("waitBox").classList.add("hide");$("doneBox").classList.remove("hide");
   }
 }
 function addHist(n,a,b,same){
@@ -265,6 +286,9 @@ $("btnCreate").onclick=()=>{enter(rid(5),true)};
 $("btnJoin").onclick=()=>{const c=$("joinCode").value.trim().toUpperCase();if(c.length<4){$("homeMsg").textContent="请输入房间码";return}$("homeMsg").textContent="";enter(c,false)};
 $("joinCode").addEventListener("keydown",e=>{if(e.key==="Enter")$("btnJoin").click()});
 $("btnStart").onclick=()=>{const w=curWait();send("start",{wait:w});startGame(w)};
+$("btnPerfect").onclick=()=>judge("p");
+$("btnClose").onclick=()=>judge("c");
+$("btnDifferent").onclick=()=>judge("d");
 $("btnSubmit").onclick=submit;
 $("wordInput").addEventListener("keydown",e=>{if(e.key==="Enter")submit()});
 $("btnAgain").onclick=()=>{const w=G?G.wait:curWait();send("start",{wait:w});startGame(w)};
