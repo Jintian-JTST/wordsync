@@ -1,44 +1,183 @@
-# 🎯 WordSync
+# 🎯 WordSync · 脑电波同频
 
-See how well your minds sync.
+**不许商量，看看我们能不能想到一起。**
 
-WordSync is a lightweight multiplayer word game where two players try to think of the same word without communicating.
+一个轻量级的双人在线默契小游戏。
 
-Create a room, invite a friend, write down a word, and reveal your answers together.
+无需下载、无需注册，只需要一个房间码，就能和朋友来一场脑电波测试。
 
-Will you both think of "hotpot"?
-Or will one choose "cat" while the other chooses "dog"?
-
-There is only one way to find out.
-
-## ✨ Features
-
-- Real-time multiplayer rooms
-- No login required
-- Mobile-friendly
-- Instant reveal system
-- Lightweight and easy to share
-
-## 🎮 How to Play
-
-1. Create a room
-2. Share the room code with a friend
-3. Both players submit a word
-4. Reveal the answers at the same time
-5. See if your minds were in sync
-
-## 🌐 Play Online
-
-https://jintian-jtst.github.io/wordsync/
-
-## 🛠 Tech Stack
-
-- HTML
-- CSS
-- JavaScript
-- MQTT
-- GitHub Pages
+🌐 **[立即开始游戏](https://jintian-jtst.github.io/wordsync/)**
 
 ---
 
-Built for fun, friendship, and those magical moments when two people think of the same thing.
+## 💡 这是什么？
+
+你有没有过这样的瞬间：
+
+两个人突然说出同一句话，或者不约而同地想到同一件事。
+
+WordSync 就是一个把这种巧合变成游戏的小项目。
+
+两个人分别写下一个词，提交后同时揭晓。
+
+- **完全一致？** 恭喜，脑电波成功同频！
+- **不完全一样？** 也许你们想到的是同一件事，只是表达不同。
+- **实在对不上？** 没关系，进入下一轮，继续寻找默契。
+
+没有复杂的规则，也不需要拼手速。
+
+有时候，最有意思的不是猜对，而是发现对方的脑回路到底有多离谱。
+
+## ✨ 功能特色
+
+| 功能 | 说明 |
+|---|---|
+| 🔗 双人实时联机 | 创建房间，通过房间码或邀请链接加入 |
+| 🚀 即开即玩 | 无需注册账号或安装应用 |
+| 🔒 同时揭晓 | 双方提交后才展示答案，避免互相影响 |
+| 🤝 默契投票 | 答案不同也能由双方共同判定是否算成功 |
+| ⏱️ 自定义等待 | 支持 30 秒或 60 秒的等待设置 |
+| 📜 历史记录 | 查看本局每一轮的答案 |
+| 📸 图片导出 | 将游戏结果导出为图片 |
+| 📱 移动端适配 | 手机和电脑浏览器均可使用 |
+
+## 🎮 游戏规则
+
+### 01 · 创建房间
+
+一名玩家创建房间，将房间码或邀请链接分享给另一名玩家。
+
+双方进入房间后，即可开始游戏。
+
+### 02 · 各写一个词
+
+双方独立思考，各自输入一个词语。
+
+**禁止提前交流答案！**
+
+提交后等待另一名玩家完成输入，系统会同时揭晓两个词语。
+
+### 03 · 判断默契
+
+**情况 A：完全一致**
+
+双方提交的词语相同，直接判定成功。
+
+🎉 恭喜，你们同频了！
+
+**情况 B：答案不同**
+
+进入双方投票环节。
+
+例如：
+
+> 玩家 A：火锅  
+> 玩家 B：麻辣烫
+
+虽然答案不一样，但你们可能觉得这两个词足够接近。
+
+双方分别选择：
+
+- **没毛病**：我觉得这也算默契。
+- **不一样**：这次确实没想到一起。
+
+只有双方都认可，才算成功。
+
+### 04 · 继续挑战
+
+如果未能达成一致，则等待设定时间后进入下一轮。
+
+直到你们成功同频。
+
+游戏结束后，还可以查看历史记录、导出结果图片，或者再来一局。
+
+## 🌐 在线体验
+
+**游戏地址：**
+
+https://jintian-jtst.github.io/wordsync/
+
+支持现代桌面及移动端浏览器。
+
+打开网页，创建房间，把链接发给朋友，就可以开始。
+
+## 🛠️ 技术实现
+
+WordSync 是一个基于原生 Web 技术构建的轻量级实时多人小游戏。
+
+| 技术 | 用途 |
+|---|---|
+| HTML5 | 页面结构与游戏界面 |
+| CSS3 | 界面样式及移动端适配 |
+| JavaScript | 游戏逻辑与交互控制 |
+| MQTT | 玩家之间的实时消息通信 |
+| GitHub Pages | 静态网页部署 |
+
+项目采用轻量级前端实现，无需传统的独立 Web 应用服务器即可部署页面。
+
+### 本地运行
+
+克隆仓库：
+
+```bash
+git clone https://github.com/Jintian-JTST/wordsync.git
+```
+
+进入项目目录：
+
+```bash
+cd wordsync
+```
+
+使用浏览器打开 `index.html`，或通过本地静态服务器运行：
+
+```bash
+python -m http.server 8000
+```
+
+然后访问：
+
+http://localhost:8000
+
+> 注意：实时联机依赖 MQTT 消息服务及网络连接。GitHub Pages 负责托管静态页面，并不直接提供实时通信服务。
+
+## 📁 项目结构
+
+```text
+wordsync/
+├── index.html    # 页面、样式与游戏逻辑
+└── README.md     # 项目说明
+```
+
+项目采用单页面结构，方便阅读、修改和部署。
+
+## 📝 项目说明
+
+这是一个出于兴趣开发的轻量级 Web 小游戏。
+
+它不追求复杂的游戏机制，而是希望用最简单的交互，制造一点意料之外的乐趣。
+
+适合朋友之间的默契挑战、情侣小游戏、破冰互动等场景。
+
+**注意事项：**
+
+- 游戏需要双方保持网络连接。
+- 实时联机依赖外部 MQTT 服务，连接质量可能影响游戏体验。
+- 本项目为休闲娱乐用途，不是科学意义上的心理契合度测试。
+- 请勿在游戏输入框中填写密码或其他敏感信息。
+
+## 👨‍💻 作者
+
+**JTST**
+
+GitHub：[Jintian-JTST](https://github.com/Jintian-JTST)
+
+项目地址：[WordSync](https://github.com/Jintian-JTST/wordsync)
+
+---
+
+**WordSync · 脑电波同频**
+
+*世界上有那么多词，我们偏偏想到了同一个。*
+
+如果你喜欢这个项目，欢迎点个 ⭐ Star！
