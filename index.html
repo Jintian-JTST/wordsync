@@ -71,10 +71,36 @@ td,th{padding:4px 6px;text-align:center;border-bottom:1px solid #eee}
       <div class="muted" id="writeHint" style="margin-top:8px"></div>
     </div>
 
-    <div id="v-reveal" class="card hide">
-      <div class="words"><div><small id="nm1"></small><span id="w1"></span></div><div><small id="nm2"></small><span id="w2"></span></div></div>
-      <div id="verdict" class="big"></div>
-      <div id="waitBox" class="hide" style="text-align:center">下一轮倒计时：<b id="count"></b> 秒</div>
+   <div id="v-reveal" class="card hide">
+  <div class="words">...</div>
+
+  <div id="verdict" class="big"></div>
+
+  <div id="judgeBox" class="hide">
+    <div class="muted" style="text-align:center;margin:12px 0">
+      你们觉得结果如何？
+    </div>
+
+    <div style="display:flex;gap:8px">
+      <button id="btnPerfect"
+              style="background:#4FA86A;flex:1">
+        ✅ 完全一致
+      </button>
+
+      <button id="btnClose"
+              style="background:#E69A4A;flex:1">
+        🤝 差不多
+      </button>
+
+      <button id="btnDifferent"
+              style="background:#D65B5B;flex:1">
+        ❌ 不一样
+      </button>
+    </div>
+  </div>
+
+  <div id="waitBox" ...
+      
       <div id="doneBox" class="hide"><div class="row"><button id="btnAgain">再来一局</button></div></div>
     </div>
 
